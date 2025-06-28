@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>เช็กวันเกิด & อายุ</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kanit&display=swap');
+
+    body {
+      font-family: 'Kanit', sans-serif;
+      background: linear-gradient(to right, #fbc2eb, #a6c1ee);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      text-align: center;
+      padding: 20px;
+    }
+
+    h1 {
+      font-size: 30px;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 18px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      width: 220px;
+      text-align: center;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 18px;
+      margin-left: 10px;
+      border: none;
+      border-radius: 8px;
+      background-color: #28a745;
+      color: white;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 30px;
+      font-size: 22px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      max-width: 320px;
+    }
+  </style>
+</head>
+<body>
+  <h1>กรุณากรอกวันเกิด (เช่น 28/6/2005)</h1>
+  <input type="text" id="birthdayText" placeholder="วัน/เดือน/ปี เช่น 28/6/2005">
+  <button onclick="checkBirthday()">ตรวจสอบ</button>
+
+  <div id="result"></div>
+
+  <script>
+    function checkBirthday() {
+      const input = document.getElementById("birthdayText").value.trim();
+      const result = document.getElementById("result");
+      const regex = /^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/;
+      const match = input.match(regex);
+
+      if (!match) {
+        result.textContent = "⛔ กรุณากรอกวันเกิดให้ถูกต้อง เช่น 28/6/2005";
+        return;
+      }
+
+      const day = parseInt(match[1]);
+      const month = parseInt(match[2]);
+      const year = parseInt(match[3]);
+
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      let birthDate = new Date(year, month - 1, day);
+      let nextBirthday = new Date(now.getFullYear(), month - 1, day);
+
+      // ถ้าผ่านวันเกิดแล้วในปีนี้ ให้เลื่อนไปปีหน้า
+      if (nextBirthday < today) {
+        nextBirthday.setFullYear(now.getFullYear() + 1);
+      }
+
+      const daysLeft = Math.ceil((nextBirthday - today) / (1000 * 60 * 60 * 24));
+
+      // คำนวณอายุ
+      let age = now.getFullYear() - year;
+      const hasHadBirthdayThisYear =
+        now.getMonth() > (month - 1) ||
+        (now.getMonth() === (month - 1) && now.getDate() >= day);
+      if (!hasHadBirthdayThisYear) {
+        age -= 1;
+      }
+
+      if (day === today.getDate() && (month - 1) === today.getMonth()) {
+        result.innerHTML = `🎉 สุขสันต์วันเกิดนะป๊า! 🎂<br>อายุ <strong>${age}</strong> ปีแล้ว!ขอให้ป๊ามีความสุขมากๆขอให้ป๊าสุขภาพร่างกายแข็งแรงน้าาา อย่ากินเยอะนะ :3 `;
+      } else {
+        result.innerHTML = `วันนี้ไม่ใช่วันเกิดคุณ 😊เหลืออีก <strong>${daysLeft}</strong> วัน ถึงวันเกิดของคุณ`;
+      }
+    }
+  </script>
+</body>
+</html>
